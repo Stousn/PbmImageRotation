@@ -1,7 +1,7 @@
 all: flip clean
 
 flip: img.o flip.o main.o
-	gcc main.o flip.o img.o -o flippic
+	gcc main.o flip.o img.o -o flipme
 
 main.o: main.c
 	gcc -Wall -std=c99 -c main.c
