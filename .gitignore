@@ -1,32 +1,14 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+# Ignore all
+*
 
-# Precompiled Headers
-*.gch
-*.pch
+# Unignore all with extensions
+!*.*
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+# Unignore all dirs
+!*/
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+# Ignore pgm files
+*.pgm
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
+# Ignore pdf files
+*.pdf
