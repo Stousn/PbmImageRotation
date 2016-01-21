@@ -9,6 +9,8 @@
 
 # Unignore LICENSE
 !LICENSE
+# Unignore Makefile
+!makefile
 
 # Ignore pgm files
 *.pgm
