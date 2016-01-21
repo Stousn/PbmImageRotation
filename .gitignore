@@ -1,3 +1,6 @@
+# Ignore this executable
+flipme
+
 # Ignore pgm/pbm files
 *.pgm
 *.pbm
