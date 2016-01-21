@@ -5,8 +5,7 @@
 - gcc
 - some pbm/pgm(P5) files
 
-#How to use:
-- in this directory
+#How to use: @Console/Terminal:
 1. make
 2. flipme source.pgm destination.pgm
 
