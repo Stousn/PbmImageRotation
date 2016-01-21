@@ -88,7 +88,7 @@ int pbm_image_write_to_stream(PbmImage* img, FILE* targetStream){
 	//Adds LF-Chars
 	char type[4];
 	sprintf(type,"%s\n",img->type);
-	char comment[39] = "# CREATOR: Heli PNM FlipMe Version 1.0\n";
+	char comment[39] = "# CREATOR: Heli PNM FlipMe Version 0.1\n";
 	char wh[10];
 	sprintf(wh,"%d %d\n",img->width,img->height);
 	char dp[6];
