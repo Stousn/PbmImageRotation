@@ -22,9 +22,9 @@ int pbm_image_flip(PbmImage* image){
 
 	//Check if pbm-Version is alright
 	//... should be, but the mighty flip.h says check again
-	if(strcmp(image->type,PBM_TYPE_P5)!=0){
-		return RET_UNSUPPORTED_FILE_FORMAT;
-	}
+	// if(strcmp(image->type,PBM_TYPE_P5)!=0){
+	// 	return RET_UNSUPPORTED_FILE_FORMAT;
+	// }
 
 	//Calculates the size of the image
 	size_t len = (image->width*image->height)+1;
@@ -33,8 +33,8 @@ int pbm_image_flip(PbmImage* image){
 	//Copyright by Gerhard Seuchter -> Example-Questions minus Errors ;)
 	for(int i = 0; i < len/2; i++){
 		char tmp = image->data[i];
-		image->data[i] = image->data[len - i];
-		image->data[len - i] = tmp;
+		image->data[i] = image->data[len - 2 - i];
+		image->data[len - 2 - i] = tmp;
 	}
 
 	//Returns OK

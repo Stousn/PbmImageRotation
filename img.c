@@ -16,38 +16,57 @@ PbmImage* pbm_image_load_from_stream(FILE* stream, int* error){
 		return NULL;
 	}
 
-	//Stores the useless Values
-	int depth = 0;
-	char comment[80];
-
 	//Reads the Type
-	fscanf(stream, "%[0-9a-zA-Z ]", img->type);
+	fgets(img->type, 4,stream);
 	//Checks if Type is OK
-	if(strcmp(img->type,PBM_TYPE_P5)!=0){
-		*error = RET_UNSUPPORTED_FILE_FORMAT;
-		return NULL;
-	}
+	// if(strcmp(img->type,PBM_TYPE_P5)!=0){
+	// 	*error = RET_UNSUPPORTED_FILE_FORMAT;
+	// 	return NULL;
+	// }
 	//Removes LF-Char
-	getc(stream);
+	//getc(stream);
 
 	//Reads the Comment
-	fscanf(stream, "%[#:.0-9a-zA-Z ]",comment);
-	//Removes the LF-Char
-	getc(stream);
-
+	char data[255];
+	data[0] = PBM_COMMENT_CHAR; // necessary to get into while-loop
+	while (data[0] == PBM_COMMENT_CHAR){
+		fgets(data, 255, stream);
+	}
 	//Reads the width and height
-	fscanf(stream, "%d %d", &img->width, &img->height);
-	//Checks if width and height are valid: >0
-	if(img->width<1 || img->height<0){
-		*error = RET_INVALID_FORMAT;
-		return NULL;
+
+	int i = 0;
+	int j = 0; // for height array
+	char height[4]; // we only support images
+	char width[4];	// up to 9999x9999 pixels
+
+	while (data[i] != ' ') {
+		width[i] = data[i];
+		i++;
 	}
 
+	i++; // important to skip space
+
+	// while loop to get height (second number -> right after space)
+	while (data[i] != 0) {
+		height[j] = data[i];
+		i++;
+		j++;
+	}
+
+	img->width = atoi(width);
+	img->height = atoi(height);
+
+	//Checks if width and height are valid: >0
+	// if(img->width<1 || img->height<0){
+	// 	*error = RET_INVALID_FORMAT;
+	// 	return NULL;
+	// }
+
 	//Reads the colordepth
-	fscanf(stream, "%d", &depth);
+	fgets(data, 255, stream);
 
 	//Calculates the Image-Size
-	size_t size = (img->width*img->height)+1;
+	size_t size = (img->width*img->height);
 
 	//Allocates Memory for the img-data
 	img->data = malloc(size);
@@ -62,9 +81,7 @@ PbmImage* pbm_image_load_from_stream(FILE* stream, int* error){
 
 	//Checks Img-params
 	printf("Type: %s\n", img->type);
-	printf("Comments: %s\n", comment);
 	printf("Width: %d Height: %d\n", img->width, img->height);
-	printf("Depth: %d\n", depth);
 	printf("Data: %s\n", img->data);
 
 	//Sets error to OK and return img
@@ -83,23 +100,15 @@ int pbm_image_write_to_stream(PbmImage* img, FILE* targetStream){
 	}
 
 	//Calculates Size for writing the Data
-	size_t size = (img->width*img->height)+1;
+	size_t size = (img->width*img->height);
 
-	//Adds LF-Chars
-	char type[4];
-	sprintf(type,"%s\n",img->type);
-	char comment[39] = "# CREATOR: Heli PNM FlipMe Version 0.1\n";
-	char wh[10];
-	sprintf(wh,"%d %d\n",img->width,img->height);
-	char dp[6];
-	sprintf(dp,"%d", 255);
+	char* comment = "# Flipme V0.1 by Heli";
+	char* dp = "255\n";
 
-	//Writes params into File ... it only works with -1 .. dont know why
-	fwrite(type,1,sizeof(type)-1,targetStream);
-	fwrite(comment,1,sizeof(comment),targetStream);
-	fwrite(wh,1,sizeof(wh)-1,targetStream);
-	fwrite(dp,1,sizeof(int)-1,targetStream);
-	fwrite(img->data,1,size,targetStream);
+	//Writes params into File
+	fprintf(targetStream, "%s%s\n%d %d\n", img->type, comment, img->width, img->height);
+	fwrite(dp,sizeof(char),strlen(dp),targetStream);
+	fwrite(img->data,sizeof(char),size,targetStream);
 
 	//Closes File and return OK
 	fclose(targetStream);
