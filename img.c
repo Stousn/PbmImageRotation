@@ -5,7 +5,9 @@
 #include <string.h>
 
 PbmImage* pbm_image_load_from_stream(FILE* stream, int* error){
+	#ifdef DEBUG
 	printf("\n::::pbm_image_load_from_stream::::\n\n");
+	#endif
 
 	//Allocate Memory for the Struct
 	PbmImage* img = malloc(sizeof(PbmImage));
@@ -18,52 +20,54 @@ PbmImage* pbm_image_load_from_stream(FILE* stream, int* error){
 
 	//Reads the Type
 	fgets(img->type, 4,stream);
-	//Checks if Type is OK
-	// if(strcmp(img->type,PBM_TYPE_P5)!=0){
-	// 	*error = RET_UNSUPPORTED_FILE_FORMAT;
-	// 	return NULL;
-	// }
-	//Removes LF-Char
-	//getc(stream);
+
+	//Checks if Type contains P5
+	if(strstr(img->type,PBM_TYPE_P5)==NULL){
+		*error = RET_UNSUPPORTED_FILE_FORMAT;
+		return NULL;
+	}
 
 	//Reads the Comment
-	char data[255];
-	data[0] = PBM_COMMENT_CHAR; // necessary to get into while-loop
-	while (data[0] == PBM_COMMENT_CHAR){
-		fgets(data, 255, stream);
+	char tmpdata[255];
+	tmpdata[0] = PBM_COMMENT_CHAR; // necessary to get into while-loop
+	while (tmpdata[0] == PBM_COMMENT_CHAR){
+		fgets(tmpdata, 255, stream);
 	}
+
 	//Reads the width and height
 
+	//Reads the Width
 	int i = 0;
-	int j = 0; // for height array
-	char height[4]; // we only support images
-	char width[4];	// up to 9999x9999 pixels
-
-	while (data[i] != ' ') {
-		width[i] = data[i];
+	char width[4];
+	while (tmpdata[i] != ' ') {
+		width[i] = tmpdata[i];
 		i++;
 	}
 
-	i++; // important to skip space
+	//Skips the whitespace
+	i++;
 
-	// while loop to get height (second number -> right after space)
-	while (data[i] != 0) {
-		height[j] = data[i];
+	//Reads the height
+	int j = 0;
+	char height[4];
+	while (tmpdata[i] != 0) {
+		height[j] = tmpdata[i];
 		i++;
 		j++;
 	}
 
+	//String to ints
 	img->width = atoi(width);
 	img->height = atoi(height);
 
 	//Checks if width and height are valid: >0
-	// if(img->width<1 || img->height<0){
-	// 	*error = RET_INVALID_FORMAT;
-	// 	return NULL;
-	// }
+	if(img->width<1 || img->height<0){
+		*error = RET_INVALID_FORMAT;
+		return NULL;
+	}
 
-	//Reads the colordepth
-	fgets(data, 255, stream);
+	//Reads the colordepth ... useless :)
+	fgets(tmpdata, 255, stream);
 
 	//Calculates the Image-Size
 	size_t size = (img->width*img->height);
@@ -80,9 +84,11 @@ PbmImage* pbm_image_load_from_stream(FILE* stream, int* error){
 	fread(img->data,size,1,stream);
 
 	//Checks Img-params
+	#ifdef DEBUG
 	printf("Type: %s\n", img->type);
 	printf("Width: %d Height: %d\n", img->width, img->height);
 	printf("Data: %s\n", img->data);
+	#endif
 
 	//Sets error to OK and return img
 	*error = RET_PBM_OK;
@@ -92,7 +98,9 @@ PbmImage* pbm_image_load_from_stream(FILE* stream, int* error){
 
 
 int pbm_image_write_to_stream(PbmImage* img, FILE* targetStream){
+	#ifdef DEBUG
 	printf("\n::::pbm_image_write_to_stream::::\n");
+	#endif
 
 	//Checks File
 	if(targetStream==NULL){
@@ -102,6 +110,7 @@ int pbm_image_write_to_stream(PbmImage* img, FILE* targetStream){
 	//Calculates Size for writing the Data
 	size_t size = (img->width*img->height);
 
+	//Comment and Color-Depth
 	char* comment = "# Flipme V0.1 by Heli";
 	char* dp = "255\n";
 
@@ -116,7 +125,9 @@ int pbm_image_write_to_stream(PbmImage* img, FILE* targetStream){
 };
 
 void pbm_image_free(PbmImage* img){
+	#ifdef DEBUG
 	printf("\n::::pbm_image_free::::\n");
+	#endif
 
 	//Frees all allocated Memory
 	free(img->data);

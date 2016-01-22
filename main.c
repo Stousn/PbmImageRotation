@@ -3,7 +3,9 @@
 #include "flip.h"
 
 int main(int argc, char const *argv[]) {
+	#ifdef DEBUG
 	printf("\n::::main::::\n\n");
+	#endif
 
 	//Checks if argc is alright
 	if (argc!=3) {
@@ -29,21 +31,26 @@ int main(int argc, char const *argv[]) {
 	image = pbm_image_load_from_stream(file, &error);
 
 	//Checks ERROR
+	#ifdef DEBUG
 	printf("DEBUG::ERROR_AFTER_LOAD:: %d\n", error);
+	#endif
 
 	//Checks Image-params
-
+	#ifdef DEBUG
 	printf("ErrorCode: %d\n", error);
 	printf("Type: %s\n", image->type);
 	printf("Width: %d Height: %d\n", image->width, image->height);
 	printf("Data: %s\n", image->data);
+	#endif
 
 
 	//Flips image
 	error = pbm_image_flip(image);
 
 	//Checks ERROR
+	#ifdef DEBUG
 	printf("DEBUG::ERROR_AFTER_FLIP:: %d\n", error);
+	#endif
 
 	if(error != RET_PBM_OK){
 		return error;
@@ -55,7 +62,9 @@ int main(int argc, char const *argv[]) {
 	error = pbm_image_write_to_stream(image, targetStream);
 
 	//Checks ERROR
+	#ifdef DEBUG
 	printf("DEBUG::ERROR_AFTER_WRITE:: %d\n", error);
+	#endif
 
 	if(error != RET_PBM_OK){
 		return error;
@@ -68,6 +77,11 @@ int main(int argc, char const *argv[]) {
 	fclose(file);
 
 	//Prints final ERROR, 0 = no error
+	#ifdef DEBUG
 	printf("DEBUG::ERROR_AT_END:: %d\n", error);
+	#endif
+	if(error==0){
+		printf("%s flipped to: %s\n", argv[1],argv[2]);
+	}
 	return error;
 }

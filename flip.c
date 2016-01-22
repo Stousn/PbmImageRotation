@@ -3,7 +3,9 @@
 #include <string.h>
 
 int pbm_image_flip(PbmImage* image){
+	#ifdef DEBUG
 	printf("\n::::pbm_image_flip::::\n");
+	#endif
 
 	//Checks if image is null
 	if(image==NULL){
@@ -20,11 +22,11 @@ int pbm_image_flip(PbmImage* image){
 		return RET_INVALID_FORMAT;
 	}
 
-	//Check if pbm-Version is alright
-	//... should be, but the mighty flip.h says check again
-	// if(strcmp(image->type,PBM_TYPE_P5)!=0){
-	// 	return RET_UNSUPPORTED_FILE_FORMAT;
-	// }
+	//Checks if Type contains P5
+	// ... should, but the mighty flip.h says check again
+	if(strstr(image->type,PBM_TYPE_P5)==NULL){
+		return RET_UNSUPPORTED_FILE_FORMAT;
+	}
 
 	//Calculates the size of the image
 	size_t len = (image->width*image->height)+1;
