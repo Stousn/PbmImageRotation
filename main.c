@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
 
 	//Saves image
 	FILE* targetStream;
-	targetStream = fopen(argv[2],"r+b");
+	targetStream = fopen(argv[2],"w");
 	error = pbm_image_write_to_stream(image, targetStream);
 
 	//Checks ERROR
